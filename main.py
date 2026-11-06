@@ -68,6 +68,10 @@ def normalise_audio(audio_file):
         subprocess.run(
             [
                 "ffmpeg",
+                "-stats",
+                "-hide_banner",
+                "-loglevel",
+                "error",
                 "-y",
                 "-i",
                 str(path),
@@ -85,7 +89,7 @@ def normalise_audio(audio_file):
             check=True,
         )
 
-        os.replace(path, tmp_path)
+        os.replace(tmp_path, path)
     finally:
         tmp_path.unlink(missing_ok=True)
 
@@ -99,6 +103,10 @@ def merge_audio_into_video(audio_file, video_file):
         subprocess.run(
             [
                 "ffmpeg",
+                "-stats",
+                "-hide_banner",
+                "-loglevel",
+                "error",
                 "-y",
                 "-i",
                 str(video_path),
@@ -117,7 +125,7 @@ def merge_audio_into_video(audio_file, video_file):
             check=True,
         )
 
-        os.replace(video_path, tmp_path)
+        os.replace(tmp_path, video_path)
     finally:
         tmp_path.unlink(missing_ok=True)
 
@@ -137,7 +145,6 @@ def main():
 
         try:
             stream_urls = get_stream_urls(page, url, [AUDIO_STREAM, LEFT_STREAM])
-            print("Stream URLs:", stream_urls)
         except Exception as e:
             print("Failed to get stream URLs:", e)
             return
