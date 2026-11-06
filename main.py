@@ -9,14 +9,14 @@ import requests
 from playwright.sync_api import sync_playwright
 
 MEGABYTE = 1024 * 1024
-AUDIO_FILE_NAME = "audio"
-VIDEO_FILE_NAME = "video"
-OUT_FILE_EXT = ".mp4"
 TIMEOUT = 1000
 STREAM_RE = re.compile(r"s(\d+)q(\d+)\.mp4")
 AUDIO_STREAM = 0
 LEFT_STREAM = 1
 RIGHT_STREAM = 2
+AUDIO_FILE_NAME = "audio"
+VIDEO_FILE_NAME = "video"
+OUT_FILE_EXT = ".mp4"
 AUDIO_FILTER = (
     "highpass=f=100,dynaudnorm=f=250:g=15:p=0.9:m=10,loudnorm=I=-16:TP=-1.5:LRA=7"
 )
@@ -160,8 +160,10 @@ def main():
         for stream, stream_url in stream_urls.items():
             is_audio = stream == AUDIO_STREAM
 
-            out_file_name = AUDIO_FILE_NAME if is_audio else VIDEO_FILE_NAME
-            out_file = out_file_name + str(stream) + OUT_FILE_EXT
+            out_file_name = (
+                AUDIO_FILE_NAME if is_audio else VIDEO_FILE_NAME + str(stream)
+            )
+            out_file = out_file_name + OUT_FILE_EXT
 
             download_content(stream_url, out_file)
 
@@ -181,7 +183,7 @@ def main():
     # normalise audio and merge with video files
     try:
         print("Normalising audio...")
-        audio_file = normalise_audio(audio_file)
+        normalise_audio(audio_file)
 
         print("Merging audio with video files...")
         for video_file in video_files:
