@@ -30,8 +30,6 @@ def get_stream_urls(page, url, streams):
         if not ("content.echo360.net.au" in request.url and ".mp4" in request.url):
             return
         path = urlsplit(request.url).path
-        if path in mp4_urls:
-            return
         re = STREAM_RE.search(path)
         s = int(re.group(1))
         if s in streams and s not in mp4_urls:
