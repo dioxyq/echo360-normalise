@@ -1,5 +1,5 @@
 {
-  description = "Python development environment";
+  description = "echo360-normalise nix flake";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
@@ -7,18 +7,35 @@
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
+
+      pythonEnv = pkgs.python3.withPackages (python: [
+        python.requests
+        python.playwright
+      ]);
+      browser = pkgs.playwright-driver.browsers;
+
+      env = ''
+          export PLAYWRIGHT_BROWSERS_PATH="${browser}"
+          export PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=true
+      '';
+
+      app = pkgs.writeShellApplication {
+        name = "echo360-normalise";
+        runtimeInputs = [pythonEnv];
+        text = env + ''exec python ${./main.py} "$@"'';
+      };
     in {
       devShells.${system}.default = pkgs.mkShell {
-        packages = with pkgs; [
-          python3
-          pkgs.python3Packages.requests
-          pkgs.python3Packages.playwright
-          pkgs.playwright-driver.browsers
+        packages = [
+            pythonEnv
+            browser
         ];
-        shellHook = ''
-          export PLAYWRIGHT_BROWSERS_PATH="${pkgs.playwright-driver.browsers}"
-          export PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=true
-        '';
+        shellHook = env;
+      };
+
+      apps.${system}.default = {
+        type = "app";
+        program = "${app}/bin/echo360-normalise";
       };
     };
 }

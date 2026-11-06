@@ -133,6 +133,7 @@ def merge_audio_into_video(audio_file, video_file):
 def main():
     if len(sys.argv) != 2:
         print("Usage: echo360_normalise URL")
+        return
 
     url = sys.argv[1]
     stream_urls = None
