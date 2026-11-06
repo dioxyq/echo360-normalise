@@ -12,7 +12,7 @@ python main.py ECHO360_URL
 ## With nix
 Using nix run (no git clone required):
 ```
-nix run github:dioxyq/echo360_normalise -- ECHO360_URL
+nix run github:dioxyq/echo360-normalise -- ECHO360_URL
 ```
 Using nix develop
 ```
